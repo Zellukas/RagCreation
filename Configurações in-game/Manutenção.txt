@@ -1,0 +1,81 @@
+// ===========================================================
+//===== Cronus Script ========================================
+//= Sistema de Manutenção
+//===== Por: =================================================
+//= Adriano Barbosa
+//===== Versão Atual: ========================================
+//= 1.0
+//===== Compatibilidade: =====================================
+//= Cronus Emulador
+//===== Descrição: ===========================================
+//= Colcoa o serivor em estado de manutenção.
+//= Apenas GM's ou ADM's podem acessar o jogo durante esse periodo.
+//= Jogadores comuns serão deslogador ao tentar conectar ao jogo.
+//============================================================
+prontera,155,175,5	script	Manutenção	100,{
+	if(getgmlevel() >= 40){
+		mes "[^0000AAManutenção^000000]";
+		mes "Painel administrativo para manutenção do servidor.";
+		mes " ";
+		switch(select("- Iniciar Manutenção:- Encerrar Manutenção:- Gerenciar aviso.")){
+			case 1:
+			if(!$mnt){
+				mes "[^FF0000Manutenção iniciada.^000000]";
+				close2;
+				for(set @i,3; @i > 0; set @i,@i-1){
+					announce "AVISO: O servidor entrara em manutenção no periodo de "+@i+" minutos.",bc_all;
+					sleep2 60000;
+				}
+				announce "AVISO: Todos serão deslogados.",bc_all;
+				sleep2 5000;
+				set $mnt,1;
+				atcommand "@kickall";
+				end;
+			}
+			mes "[^0000FFManutenção ja iniciada.^000000]";
+			close; 
+			case 2:
+			if($mnt){
+				mes "[^0000FFManutenção encerrada.^000000]";
+				set $mnt,0;
+				close;
+			}
+			mes "[^FF0000Nenhuma Manutenção foi iniciada.^000000]";
+			close; 
+			case 3:
+			if(select("- Ativar mensagem:- Desativar mensagem")==1){
+				if(!$avs){
+					input $msg$;
+					mes "[^0000FFMensagem ativa.^000000]";
+					set $avs,1;
+					close;
+				}
+				mes "[^FF0000Mensagem ja ativa.^000000]";
+				close; 
+			}
+			if($avs){
+				mes "[^0000FFMensagem desativada.^000000]";
+				set $avs,0;
+				close;
+			}
+			mes "[^FF0000Mensagem não ativa.^000000]";
+			close; 
+		}
+	}
+end;
+OnPcLoginEvent:
+	if(getgmlevel() < 40){
+		if($mnt){
+			mes "[^0000AAManutenção^000000]";
+			mes "Servidor em manutenção.";
+			mes " ";
+			if($avs) mes "Motivo: "+$msg$;
+			atcommand "@hide "+StrCharInfo(0);
+			atcommand "@option 2 0 0 "+StrCharInfo(0);
+			sleep2 5000;
+			atcommand "@kick "+strcharinfo(0);
+			end;
+		}
+	}
+end;
+}

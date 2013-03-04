@@ -1,0 +1,43 @@
+// ===========================================================
+//===== Cronus Script ========================================
+//= Sistema de Mensagem Global 1.0
+//===== Por: =================================================
+//= Adriano Barbosa
+//===== Versão Atual: ========================================
+//= 1.0
+//===== Compatibilidade: =====================================
+//= Cronus Emulador
+//===== Descrição: ===========================================
+// O Sistema de Mensagem Global funciona de uma Forma diferente do Torpedo, o Sistema de Mensagem Global
+// enviar uma mensagem para todos os jogadores Online pelo Chat Chat Box(Aquele Chat Normal onde todos falam).
+// A Mensagem pode ser enviada atraves de um Item ( Item no final do script ) que ao ser clicado duas exibe uma caixa onde você
+// escreve sua Mensagem Global.
+// Apos o Envio de uma Mensagem existe um Tempo de espera para que não aja flood no Chat.
+//============================================================
+
+-	script	Global	-1,{
+function	script	Global#1	{
+
+	if(#delay < gettimetick(1))
+	{
+		input @MSG$;
+		globalmes "["+StrCharInfo(0)+"]: "+@MSG$+"","Global";
+		set #delay, gettimetick(1) + 30;
+		end;
+	}
+	else
+	{
+		dispbottom "Espere 30 Segundos para Enviar outro Global.";
+		getitem 16266,1;
+		end;
+	}
+
+}
+
+//============================================================
+//Adicione o ITEM ao seu Item_db2.txt
+//============================================================
+//16266,Global,Global,2,1,,10,,,,,0xFFFFFFFF,7,2,,,,,,{ callfunc ("Global#1"); },{},{}
+//============================================================
+// O Item pode ser customizado do jeito que o usuario preferir.
+//============================================================
